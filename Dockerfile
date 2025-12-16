@@ -13,7 +13,7 @@ WORKDIR /app
 COPY pyproject.toml ./
 COPY src/ ./src/
 COPY backend/ ./backend/
-RUN uv sync --no-dev
+RUN uv sync
 
 # Stage 3: Final runtime image
 FROM python:3.11-slim
