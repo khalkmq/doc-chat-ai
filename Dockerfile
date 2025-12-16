@@ -35,32 +35,12 @@ WORKDIR /app
 # Create directories for persistent data
 RUN mkdir -p /app/data /app/metadata
 
-# Expose ports (8000 for backend, 3000 for frontend)
-EXPOSE 8000 3000
+# Expose only backend port (serves both API and frontend static files)
+EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:8000/api/health || exit 1
 
-# Start script
-COPY <<'EOF' /app/start.sh
-#!/bin/bash
-# Start backend
-cd /app
-uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
-
-# Start frontend
-cd /app/frontend
-npm run start -- -p 3000 &
-
-# Wait for any process to exit
-wait -n
-
-# Exit with status of process that exited first
-exit $?
-EOF
-
-RUN chmod +x /app/start.sh
-
-# Run both services
-CMD ["/app/start.sh"]
+# Start script - only need backend since frontend is static export
+CMD ["uv", "run", "uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
