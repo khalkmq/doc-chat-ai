@@ -14,10 +14,12 @@ __pycache__/
 dist/
 build/
 .venv/
+*.pyc
 
 # Environment
 .env
 .env.local
+.env.*
 
 # OS
 .DS_Store
@@ -31,6 +33,7 @@ Thumbs.db
 
 # Milvus databases
 *.db
+*.db.lock
 milvus_lite_*.db
 
 # Logs
@@ -43,3 +46,30 @@ podcast_*.json
 
 # Data
 data/
+session_metadata/
+
+# Git
+.git/
+.github/
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Development
+dev.sh
+*.sh
+
+# Railway
+railway.json
