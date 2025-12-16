@@ -1,0 +1,45 @@
+# Frontend build artifacts
+frontend/node_modules/
+frontend/.next/
+frontend/dist/
+frontend/*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Milvus databases
+*.db
+milvus_lite_*.db
+
+# Logs
+*.log
+logs/
+
+# Outputs
+outputs/
+podcast_*.json
+
+# Data
+data/
