@@ -36,9 +36,13 @@ class SessionPipeline(BaseModel):
 # In-memory session storage (in production, use Redis or DB)
 _sessions: Dict[str, SessionPipeline] = {}
 
-# Session metadata directory
-SESSION_METADATA_DIR = Path("./session_metadata")
+# Session metadata directory - use /app/metadata for Docker volumes
+SESSION_METADATA_DIR = Path(os.getenv("SESSION_METADATA_DIR", "./metadata"))
 SESSION_METADATA_DIR.mkdir(exist_ok=True)
+
+# Data directory for Milvus databases - use /app/data for Docker volumes
+DATA_DIR = Path(os.getenv("DATA_DIR", "./data"))
+DATA_DIR.mkdir(exist_ok=True)
 
 def _save_session_metadata(session_id: str, sources: list):
     """Save session metadata to disk for persistence (NO API KEYS STORED)"""
@@ -62,7 +66,7 @@ def _load_session_metadata(session_id: str) -> Optional[dict]:
 def restore_session(session_id: str, openai_key: str = None, openrouter_key: str = None, firecrawl_key: str = None, zep_key: str = None) -> Optional[SessionPipeline]:
     """Restore a session from existing Milvus database and metadata"""
     # Check if Milvus database exists
-    db_path = f"./milvus_lite_{session_id[:8]}.db"
+    db_path = DATA_DIR / f"milvus_lite_{session_id[:8]}.db"
     if not os.path.exists(db_path):
         logger.warning(f"No database found for session {session_id[:8]}")
         return None
@@ -74,8 +78,9 @@ def restore_session(session_id: str, openai_key: str = None, openrouter_key: str
         doc_processor = DocumentProcessor()
         embedding_generator = EmbeddingGenerator()
         vector_db = MilvusVectorDB(
-            db_path=db_path,
-            collection_name=f"collection_{session_id[:8]}"
+            db_path=str(db_path),  # Convert Path to string for Milvus
+            collection_name=f"collection_{session_id[:8]}",
+            embedding_dim=embedding_generator.get_embedding_dimension()
         )
         
         # Initialize optional components based on API keys
@@ -138,8 +143,9 @@ def create_session(openai_key: str = None, openrouter_key: str = None, firecrawl
         doc_processor = DocumentProcessor()
         embedding_generator = EmbeddingGenerator()
         vector_db = MilvusVectorDB(
-            db_path=f"./milvus_lite_{session_id[:8]}.db",
-            collection_name=f"collection_{session_id[:8]}"
+            db_path=str(DATA_DIR / f"milvus_lite_{session_id[:8]}.db"),
+            collection_name=f"collection_{session_id[:8]}",
+            embedding_dim=embedding_generator.get_embedding_dimension()
         )
         
         # Initialize optional components based on API keys

@@ -44,22 +44,20 @@ A powerful RAG (Retrieval-Augmented Generation) document chat application that l
 docker build -t doc-chat .
 ```
 
-This creates an optimized multi-stage build.
+This creates an optimized multi-stage build (~1.9GB).
 
 ### Run the Container
 
 ```bash
 docker run -d \
   -p 8000:8000 \
-  -v $(pwd)/data:/app/data \
-  -v $(pwd)/metadata:/app/metadata \
   --name doc-chat \
   doc-chat
 ```
 
 The app will be available at **http://localhost:8000**
 
-**Important:** The volumes (`-v` flags) are required to persist your documents and sessions across container restarts.
+**Note:** Due to Milvus Lite limitations with Docker volumes, data persistence in local Docker requires using the container's filesystem. For production deployments (Railway, Render), use their native persistent disk features which work correctly.
 
 ### Stop the Container
 

@@ -36,9 +36,6 @@ COPY --from=backend-builder /app/pyproject.toml /app/pyproject.toml
 # Copy frontend static build
 COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
 
-# Create directories for persistent data
-RUN mkdir -p /app/data /app/metadata
-
 # Expose only backend port (serves both API and frontend static files)
 EXPOSE 8000
 
