@@ -32,15 +32,35 @@ RUN npm run build
 # Back to app root
 WORKDIR /app
 
-# Copy .env if exists (for local testing - don't do this in production!)
-COPY .env* ./
+# Create directories for persistent data
+RUN mkdir -p /app/data /app/metadata
 
-# Expose port
-EXPOSE 8000
+# Expose ports (8000 for backend, 3000 for frontend)
+EXPOSE 8000 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8000/api/health || exit 1
+    CMD curl -f http://localhost:8000/health || exit 1
 
-# Run FastAPI server
-CMD ["uv", "run", "python", "-m", "backend.main"]
+# Start script
+COPY <<'EOF' /app/start.sh
+#!/bin/bash
+# Start backend
+cd /app
+uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
+
+# Start frontend
+cd /app/frontend
+npm run start -- -p 3000 &
+
+# Wait for any process to exit
+wait -n
+
+# Exit with status of process that exited first
+exit $?
+EOF
+
+RUN chmod +x /app/start.sh
+
+# Run both services
+CMD ["/app/start.sh"]
