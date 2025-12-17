@@ -13,18 +13,17 @@ export interface Model {
   }
 }
 
-// OpenAI Models
+// OpenAI Models (GPT-5 Series + Legacy)
 export const OPENAI_MODELS: Model[] = [
-  { id: 'gpt-4o', name: 'GPT-4o (Direct)', provider: 'OpenAI Direct', context_length: 128000 },
+  { id: 'gpt-5.2', name: 'GPT-5.2 (Direct)', provider: 'OpenAI Direct', context_length: 200000 },
+  { id: 'gpt-5-mini', name: 'GPT-5 Mini (Direct)', provider: 'OpenAI Direct', context_length: 200000 },
+  { id: 'gpt-5-nano', name: 'GPT-5 Nano (Direct)', provider: 'OpenAI Direct', context_length: 128000 },
+  { id: 'gpt-4.1', name: 'GPT-4.1 (Direct)', provider: 'OpenAI Direct', context_length: 128000 },
   { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Direct)', provider: 'OpenAI Direct', context_length: 128000 },
-  { id: 'gpt-4-turbo', name: 'GPT-4 Turbo (Direct)', provider: 'OpenAI Direct', context_length: 128000 },
-  { id: 'gpt-4', name: 'GPT-4 (Direct)', provider: 'OpenAI Direct', context_length: 8192 },
-  { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo (Direct)', provider: 'OpenAI Direct', context_length: 16385 },
 ]
 
 // OpenRouter Models (popular ones for RAG)
 export const OPENROUTER_MODELS: Model[] = [
-  { id: 'openai/gpt-4o', name: 'GPT-4o', provider: 'OpenAI via OpenRouter', context_length: 128000 },
   { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI via OpenRouter', context_length: 128000 },
   { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic via OpenRouter', context_length: 200000 },
   { id: 'anthropic/claude-3-haiku', name: 'Claude 3 Haiku', provider: 'Anthropic via OpenRouter', context_length: 200000 },
@@ -75,9 +74,9 @@ export function setSelectedModel(modelId: string): void {
  */
 export function getDefaultModel(keys: { openai?: string; openrouter?: string }): string {
   if (keys.openrouter) {
-    return 'openai/gpt-4o-mini' // Default for OpenRouter
+    return 'openai/gpt-4o-mini' // Default for OpenRouter (GPT-5 not available yet)
   } else if (keys.openai) {
-    return 'gpt-4o-mini' // Default for OpenAI
+    return 'gpt-5-mini' // Default for OpenAI Direct
   }
-  return 'gpt-4o-mini'
+  return 'gpt-5-mini'
 }

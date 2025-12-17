@@ -63,16 +63,30 @@ class RAGGenerator:
         else:
             raise ValueError("Either OpenAI or OpenRouter API key must be provided")
         
-        self.llm = LLM(
-            model=model_with_prefix,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            api_key=api_key,
-            base_url=api_base
-        )
+        # GPT-5 models use max_completion_tokens instead of max_tokens
+        llm_params = {
+            "model": model_with_prefix,
+            "api_key": api_key,
+            "base_url": api_base
+        }
+        
+        # GPT-5 models have different parameter requirements
+        if self._is_gpt5_model(model_name):
+            llm_params["max_completion_tokens"] = max_tokens
+            llm_params["temperature"] = 1  # GPT-5 only supports temperature=1
+        else:
+            llm_params["max_tokens"] = max_tokens
+            llm_params["temperature"] = temperature
+        
+        self.llm = LLM(**llm_params)
         
         self.model_name = model_name
         logger.info(f"RAG Generator initialized with {model_name} via {'OpenRouter' if openrouter_api_key else 'OpenAI'}")
+    
+    def _is_gpt5_model(self, model_name: str) -> bool:
+        """Check if the model is a GPT-5 series model"""
+        model_lower = model_name.lower()
+        return 'gpt-5' in model_lower or 'gpt5' in model_lower
     
     def generate_response(
         self,
@@ -147,13 +161,22 @@ class RAGGenerator:
                     api_base = None
                     model_str = f"openai/{model}"
                 
-                llm_for_request = LLM(
-                    model=model_str,
-                    temperature=self.temperature,
-                    max_tokens=self.max_tokens,
-                    api_key=api_key,
-                    base_url=api_base
-                )
+                # GPT-5 models use max_completion_tokens instead of max_tokens
+                llm_params = {
+                    "model": model_str,
+                    "api_key": api_key,
+                    "base_url": api_base
+                }
+                
+                # GPT-5 models have different parameter requirements
+                if self._is_gpt5_model(model):
+                    llm_params["max_completion_tokens"] = self.max_tokens
+                    llm_params["temperature"] = 1  # GPT-5 only supports temperature=1
+                else:
+                    llm_params["max_tokens"] = self.max_tokens
+                    llm_params["temperature"] = self.temperature
+                
+                llm_for_request = LLM(**llm_params)
                 response = llm_for_request.call(prompt)
                 logger.info(f"Generated response with model: {model} via {'OpenRouter' if '/' in model else 'OpenAI Direct'}")
             else:
