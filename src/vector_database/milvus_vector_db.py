@@ -13,7 +13,7 @@ class MilvusVectorDB:
     def __init__(
         self, 
         db_path: str = "./milvus_lite.db",
-        collection_name: str = "notebook_lm",
+        collection_name: str = "doc_chat",
         embedding_dim: int = 384
     ):
         self.db_path = db_path
