@@ -289,11 +289,12 @@ class RAGGenerator:
             prompt = f"""You are an AI assistant that answers questions based on provided source material. You must follow these citation rules:
 
 CITATION REQUIREMENTS:
-1. For each factual claim in your answer, include the citation reference number in square brackets [1], [2], etc.
-2. Only use information from the provided context - do not add external knowledge
-3. If you cannot find relevant information in the context, say so clearly
-4. Be precise and accurate in your citations
-5. When multiple sources support the same point, list all relevant citations like this [1], [2], [3].
+1. For greetings and casual conversation (e.g., "hello", "what are you"), respond naturally without requiring citations
+2. For each factual claim in your answer, include the citation reference number in square brackets [1], [2], etc.
+3. Only use information from the provided context - do not add external knowledge
+4. If you cannot find relevant information in the context, say so clearly
+5. Be precise and accurate in your citations
+6. When multiple sources support the same point, list all relevant citations like this [1], [2], [3].
 
 CONTEXT (with citation references):
 {context}
@@ -320,8 +321,9 @@ Please provide a comprehensive answer with proper citations. Make sure every fac
         prompt = f"""You are an AI assistant that answers questions based on documents and conversation history.
 
 INSTRUCTIONS:
-- When the user shares information (statements like "I like X" or "My name is Y"), acknowledge it briefly
-- When the user asks questions, use both the conversation history AND documents to answer
+- For greetings and casual conversation (e.g., "hello", "what are you"), respond naturally without requiring citations
+- When the user shares information (statements like "I like X" or "My name is Y"), acknowledge it briefly and cite as [0]
+- When the user asks factual questions, use both the conversation history AND documents to answer
 - Cite conversation history as [0] and documents as [1], [2], [3], etc.
 - Be helpful and conversational while staying accurate
 {conversation_context}
