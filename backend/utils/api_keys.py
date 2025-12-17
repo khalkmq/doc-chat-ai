@@ -72,3 +72,33 @@ def get_enabled_features(keys: Dict[str, Optional[str]]) -> Dict[str, bool]:
         "web_scraping_enabled": validate_api_key(keys.get("firecrawl")),
         "memory_enabled": validate_api_key(keys.get("zep"))
     }
+
+def validate_required_keys(keys: Dict[str, Optional[str]]) -> tuple[bool, str]:
+    """
+    Validate that all required API keys are provided.
+    
+    Required:
+    - At least one of: OpenAI or OpenRouter
+    - Firecrawl (mandatory)
+    - Zep (mandatory)
+    
+    Args:
+        keys: Dictionary of API keys
+        
+    Returns:
+        Tuple of (is_valid, error_message)
+    """
+    # Check if at least one AI provider key is provided
+    has_ai_key = validate_api_key(keys.get("openai")) or validate_api_key(keys.get("openrouter"))
+    if not has_ai_key:
+        return False, "At least one AI provider key is required (OpenAI or OpenRouter)"
+    
+    # Check mandatory keys
+    if not validate_api_key(keys.get("firecrawl")):
+        return False, "Firecrawl API key is required"
+    
+    if not validate_api_key(keys.get("zep")):
+        return False, "Zep API key is required"
+    
+    return True, ""
+

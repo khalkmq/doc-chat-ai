@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Header, Request
 from typing import Optional
 
 from backend.session import get_session, create_session, delete_session, update_session_sources
-from backend.utils.api_keys import get_api_keys_from_request, get_enabled_features
+from backend.utils.api_keys import get_api_keys_from_request, get_enabled_features, validate_required_keys
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -14,9 +14,15 @@ router = APIRouter()
 @router.post("/session")
 async def create_new_session(request: Request):
     """
-    Create a new session with initialized pipeline
+    Create a new session with initialized pipeline.
+    Requires: At least one AI key (OpenAI or OpenRouter), Firecrawl, and Zep.
     """
     keys = get_api_keys_from_request(request)
+    
+    # Validate required keys
+    is_valid, error_msg = validate_required_keys(keys)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail=error_msg)
     
     try:
         session = create_session(

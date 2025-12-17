@@ -64,11 +64,17 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
             DocChat never stores your keys on the server.
           </p>
 
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6">
+            <p className="text-sm text-yellow-200">
+              <strong>Required:</strong> At least one AI provider (OpenAI or OpenRouter), plus Firecrawl and Zep keys.
+            </p>
+          </div>
+
           {/* OpenAI Key */}
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">
-                OpenAI API Key <span className="text-muted-foreground text-xs">(Choose one: OpenAI OR OpenRouter)</span>
+                OpenAI API Key <span className="text-muted-foreground text-xs">(Choose at least one: OpenAI / OpenRouter)</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -97,7 +103,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
             {/* OpenRouter Key */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                OpenRouter API Key <span className="text-muted-foreground text-xs">(Choose one: OpenAI OR OpenRouter)</span>
+                OpenRouter API Key <span className="text-muted-foreground text-xs">(Choose at least one: OpenAI / OpenRouter)</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -116,7 +122,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
                 </button>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Access 100+ models (GPT-4, Claude, Gemini, Llama, etc.). Get your key from{' '}
+                For chat and document processing, access to most models (GPT-4, Claude, Gemini, Llama, etc.). Get your key from{' '}
                 <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                   openrouter.ai
                 </a>
@@ -126,7 +132,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
             {/* Firecrawl Key */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Firecrawl API Key <span className="text-muted-foreground text-xs">(Optional)</span>
+                Firecrawl API Key <span className="text-red-500 text-xs">*Required</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -155,7 +161,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
             {/* Zep Key */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Zep API Key <span className="text-muted-foreground text-xs">(Optional)</span>
+                Zep API Key <span className="text-red-500 text-xs">*Required</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -186,7 +192,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
           <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
             <p className="text-sm text-yellow-600 dark:text-yellow-400">
               <strong>Security Notice:</strong> Your API keys are stored in your browser's localStorage. 
-              Only use this application on trusted devices and always use HTTPS in production.
+              Only use this application on trusted devices.
             </p>
           </div>
 

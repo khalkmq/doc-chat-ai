@@ -5,6 +5,7 @@ import ChatInterface from '@/components/ChatInterface'
 import SourcesSidebar from '@/components/SourcesSidebar'
 import UploadDialog from '@/components/UploadDialog'
 import SettingsModal from '@/components/SettingsModal'
+import WelcomeScreen from '@/components/WelcomeScreen'
 import { Brain, Settings } from 'lucide-react'
 import { createSession, verifySession } from '@/lib/api'
 import { hasAnyKeys } from '@/lib/apiKeys'
@@ -16,6 +17,9 @@ export default function Home() {
   const [showSessionModal, setShowSessionModal] = useState(false)
   const [showNewSessionModal, setShowNewSessionModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [hasConfiguredKeys, setHasConfiguredKeys] = useState(false)
   const [manualSessionId, setManualSessionId] = useState('')
   const [sidebarWidth, setSidebarWidth] = useState(256) // Default 256px (w-64)
   const [isResizing, setIsResizing] = useState(false)
@@ -23,9 +27,14 @@ export default function Home() {
   useEffect(() => {
     // Check if user has API keys configured
     if (!hasAnyKeys()) {
-      setShowSettingsModal(true)
+      setHasConfiguredKeys(false)
+      setShowWelcome(true)
+      setIsLoading(false)
       return
     }
+
+    setHasConfiguredKeys(true)
+    setShowWelcome(false)
 
     const initSession = async () => {
       const storedSessionId = localStorage.getItem('docchat_session_id')
@@ -37,6 +46,7 @@ export default function Home() {
         
         if (result.valid) {
           setSessionId(storedSessionId)
+          setIsLoading(false)
           console.log('Restored existing session:', storedSessionId, 'with', result.sources_count, 'sources')
           return
         } else {
@@ -50,10 +60,12 @@ export default function Home() {
         const data = await createSession()
         setSessionId(data.session_id)
         localStorage.setItem('docchat_session_id', data.session_id)
+        setIsLoading(false)
         console.log('New session created:', data.session_id)
         console.log('Features enabled:', data.features)
       } catch (err) {
         console.error('Failed to create session:', err)
+        setIsLoading(false)
         setShowSettingsModal(true)
       }
     }
@@ -117,24 +129,54 @@ export default function Home() {
     }
   }
 
-  if (!sessionId) {
+  // Show loading screen while checking keys and initializing
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <Brain className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
+          <p className="text-muted-foreground">Initializing DocChat...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show welcome screen if no keys configured
+  if (showWelcome || !hasConfiguredKeys) {
     return (
       <>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <Brain className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
-            <p className="text-muted-foreground">Initializing DocChat...</p>
-          </div>
-        </div>
+        <WelcomeScreen 
+          onConfigure={() => setShowSettingsModal(true)}
+        />
         <SettingsModal
           isOpen={showSettingsModal}
-          onClose={() => setShowSettingsModal(false)}
+          onClose={() => {
+            // If they cancel and have no keys, stay on welcome
+            if (!hasAnyKeys()) {
+              setShowSettingsModal(false)
+              setShowWelcome(true)
+            } else {
+              setShowSettingsModal(false)
+            }
+          }}
           onSave={() => {
             // Reload to create session with new keys
             window.location.reload()
           }}
         />
       </>
+    )
+  }
+
+  // Show loading while session initializes (after keys are confirmed)
+  if (!sessionId) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <Brain className="w-12 h-12 mx-auto mb-4 animate-pulse text-primary" />
+          <p className="text-muted-foreground">Creating session...</p>
+        </div>
+      </div>
     )
   }
 

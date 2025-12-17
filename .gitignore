@@ -48,6 +48,10 @@ milvus_lite_*.db
 
 # Session metadata (contains user data)
 session_metadata/
+metadata/
+
+# Data directory (contains Milvus databases)
+data/
 
 # Logs
 *.log
