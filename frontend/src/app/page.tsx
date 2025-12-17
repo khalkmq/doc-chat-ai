@@ -15,7 +15,6 @@ export default function Home() {
   const [sources, setSources] = useState<any[]>([])
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [showSessionModal, setShowSessionModal] = useState(false)
-  const [showNewSessionModal, setShowNewSessionModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -118,7 +117,7 @@ export default function Home() {
 
   const handleNewSession = () => {
     localStorage.removeItem('docchat_session_id')
-    setShowNewSessionModal(false)   
+    setShowSessionModal(false)   
     window.location.reload()
   }
 
@@ -203,7 +202,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Brain className="w-8 h-8 text-primary" />
-              <h1 className="text-2xl font-bold">DocChat: Chat with Your Documents</h1>
+              <h1 className="text-2xl font-bold">DocChat - Chat with Your Documents</h1>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -219,14 +218,7 @@ export default function Home() {
                 className="px-3 py-1.5 text-sm border border-border rounded-md hover:bg-secondary transition-colors"
                 title="Manage session"
               >
-                Session
-              </button>
-              <button
-                onClick={() => setShowNewSessionModal(true)}
-                className="px-3 py-1.5 text-sm border border-border rounded-md hover:bg-secondary transition-colors"
-                title="Start new session"
-              >
-                New Session
+                Manage Session
               </button>
             </div>
           </div>
@@ -311,49 +303,25 @@ export default function Home() {
                         Enter a previous session ID to access your old data
                       </p>
                     </div>
+
+                    <div className="border-t border-border pt-4">
+                      <label className="text-sm font-medium block mb-2">Start New Session:</label>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Create a fresh session. Your current session is saved and can be restored later using the session ID.
+                      </p>
+                      <button
+                        onClick={handleNewSession}
+                        className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm"
+                      >
+                        Start New Session
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           )}
           
-          {showNewSessionModal && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-card border border-border rounded-lg shadow-xl max-w-md w-full m-4">
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-2xl font-bold">Start New Session</h2>
-                    <button
-                      onClick={() => setShowNewSessionModal(false)}
-                      className="text-muted-foreground hover:text-foreground transition-colors text-2xl leading-none"
-                      title="Close"
-                    >
-                      ×
-                    </button>
-                  </div>
-                  
-                  <p className="text-muted-foreground mb-6">
-                    Are you sure you want to start a new session? Your current session ID is saved and you can restore it later using the Session button.
-                  </p>
-                  
-                  <div className="flex gap-3 justify-end">
-                    <button
-                      onClick={() => setShowNewSessionModal(false)}
-                      className="px-4 py-2 border border-border rounded-md hover:bg-secondary transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleNewSession}
-                      className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-                    >
-                      Start New Session
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
           
           <SettingsModal
             isOpen={showSettingsModal}
