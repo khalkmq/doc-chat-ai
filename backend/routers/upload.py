@@ -37,8 +37,7 @@ async def upload_file(
         x_session_id,
         openai_key=keys["openai"],
         openrouter_key=keys["openrouter"],
-        firecrawl_key=keys["firecrawl"],
-        zep_key=keys["zep"]
+        firecrawl_key=keys["firecrawl"]
     )
     if not session:
         raise HTTPException(status_code=404, detail="Session not found or could not be restored")
@@ -127,8 +126,7 @@ async def upload_text(
         x_session_id,
         openai_key=keys["openai"],
         openrouter_key=keys["openrouter"],
-        firecrawl_key=keys["firecrawl"],
-        zep_key=keys["zep"]
+        firecrawl_key=keys["firecrawl"]
     )
     if not session:
         raise HTTPException(status_code=404, detail="Session not found or could not be restored")
@@ -201,8 +199,7 @@ async def upload_urls(
         x_session_id,
         openai_key=keys["openai"],
         openrouter_key=keys["openrouter"],
-        firecrawl_key=keys["firecrawl"],
-        zep_key=keys["zep"]
+        firecrawl_key=keys["firecrawl"]
     )
     if not session:
         raise HTTPException(status_code=404, detail="Session not found or could not be restored")
@@ -241,6 +238,7 @@ async def upload_urls(
                     'url': url
                 }
                 session.sources.append(source_info)
+                
                 results.append({"url": url, "status": "success", "chunks": len(chunks)})
             else:
                 results.append({"url": url, "status": "failed", "error": "No content extracted"})

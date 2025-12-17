@@ -75,7 +75,7 @@ export default function WelcomeScreen({ onConfigure }: WelcomeScreenProps) {
           </button>
 
           <p className="text-xs text-muted-foreground">
-            Required: OpenAI or OpenRouter, Firecrawl, and Zep API keys
+            Required: OpenAI or OpenRouter, and Firecrawl API keys
           </p>
 
           <a

@@ -17,25 +17,22 @@ def get_api_keys_from_request(request: Request) -> Dict[str, Optional[str]]:
         request: FastAPI Request object
         
     Returns:
-        Dictionary with openai, openrouter, firecrawl, and zep keys
+        Dictionary with openai, openrouter, and firecrawl keys
     """
     # Try to get keys from headers first
     openai_key = request.headers.get('X-OpenAI-Key') or os.getenv("OPENAI_API_KEY")
     openrouter_key = request.headers.get('X-OpenRouter-Key') or os.getenv("OPENROUTER_API_KEY")
     firecrawl_key = request.headers.get('X-Firecrawl-Key') or os.getenv("FIRECRAWL_API_KEY")
-    zep_key = request.headers.get('X-Zep-Key') or os.getenv("ZEP_API_KEY")
     
     # Log which keys are being used (without revealing the actual keys)
     logger.info(f"API Keys - OpenAI: {'user' if request.headers.get('X-OpenAI-Key') else 'server'}, "
                 f"OpenRouter: {'user' if request.headers.get('X-OpenRouter-Key') else 'server'}, "
-                f"Firecrawl: {'user' if request.headers.get('X-Firecrawl-Key') else 'server'}, "
-                f"Zep: {'user' if request.headers.get('X-Zep-Key') else 'server'}")
+                f"Firecrawl: {'user' if request.headers.get('X-Firecrawl-Key') else 'server'}")
     
     return {
         "openai": openai_key,
         "openrouter": openrouter_key,
-        "firecrawl": firecrawl_key,
-        "zep": zep_key
+        "firecrawl": firecrawl_key
     }
 
 def validate_api_key(key: Optional[str], placeholder: str = "<YOUR_") -> bool:
@@ -69,8 +66,7 @@ def get_enabled_features(keys: Dict[str, Optional[str]]) -> Dict[str, bool]:
     """
     return {
         "chat_enabled": validate_api_key(keys.get("openai")) or validate_api_key(keys.get("openrouter")),
-        "web_scraping_enabled": validate_api_key(keys.get("firecrawl")),
-        "memory_enabled": validate_api_key(keys.get("zep"))
+        "web_scraping_enabled": validate_api_key(keys.get("firecrawl"))
     }
 
 def validate_required_keys(keys: Dict[str, Optional[str]]) -> tuple[bool, str]:
@@ -80,7 +76,6 @@ def validate_required_keys(keys: Dict[str, Optional[str]]) -> tuple[bool, str]:
     Required:
     - At least one of: OpenAI or OpenRouter
     - Firecrawl (mandatory)
-    - Zep (mandatory)
     
     Args:
         keys: Dictionary of API keys
@@ -96,9 +91,6 @@ def validate_required_keys(keys: Dict[str, Optional[str]]) -> tuple[bool, str]:
     # Check mandatory keys
     if not validate_api_key(keys.get("firecrawl")):
         return False, "Firecrawl API key is required"
-    
-    if not validate_api_key(keys.get("zep")):
-        return False, "Zep API key is required"
     
     return True, ""
 

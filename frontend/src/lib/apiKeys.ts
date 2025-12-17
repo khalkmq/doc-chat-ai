@@ -6,7 +6,6 @@ export interface ApiKeys {
   openai?: string
   openrouter?: string
   firecrawl?: string
-  zep?: string
 }
 
 const STORAGE_KEY = 'docchat_api_keys'
@@ -47,8 +46,7 @@ export function setApiKeys(keys: ApiKeys): void {
     const sanitized: ApiKeys = {
       openai: sanitizeApiKey(keys.openai),
       openrouter: sanitizeApiKey(keys.openrouter),
-      firecrawl: sanitizeApiKey(keys.firecrawl),
-      zep: sanitizeApiKey(keys.zep),
+      firecrawl: sanitizeApiKey(keys.firecrawl)
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized))
   } catch (error) {
@@ -87,7 +85,7 @@ export function clearApiKeys(): void {
  */
 export function hasAnyKeys(): boolean {
   const keys = getApiKeys()
-  return !!(keys.openai || keys.openrouter || keys.firecrawl || keys.zep)
+  return !!(keys.openai || keys.openrouter || keys.firecrawl)
 }
 
 /**
@@ -96,12 +94,10 @@ export function hasAnyKeys(): boolean {
 export function getEnabledFeatures(): {
   chat: boolean
   webScraping: boolean
-  memory: boolean
 } {
   const keys = getApiKeys()
   return {
     chat: !!(keys.openai || keys.openrouter), // Either OpenAI or OpenRouter enables chat
-    webScraping: !!keys.firecrawl,
-    memory: !!keys.zep
+    webScraping: !!keys.firecrawl
   }
 }

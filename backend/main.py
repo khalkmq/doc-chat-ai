@@ -53,8 +53,7 @@ async def health_check():
     return {
         "status": "healthy",
         "openai_configured": bool(os.getenv("OPENAI_API_KEY")),
-        "firecrawl_configured": bool(os.getenv("FIRECRAWL_API_KEY")),
-        "zep_configured": bool(os.getenv("ZEP_API_KEY"))
+        "firecrawl_configured": bool(os.getenv("FIRECRAWL_API_KEY"))
     }
 
 # Serve static frontend in production

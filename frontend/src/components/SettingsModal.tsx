@@ -15,8 +15,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
   const [showKeys, setShowKeys] = useState({
     openai: false,
     openrouter: false,
-    firecrawl: false,
-    zep: false
+    firecrawl: false
   })
   const [isSaving, setIsSaving] = useState(false)
 
@@ -66,7 +65,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
 
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6">
             <p className="text-sm text-yellow-200">
-              <strong>Required:</strong> At least one AI provider (OpenAI or OpenRouter), plus Firecrawl and Zep keys.
+              <strong>Required:</strong> At least one AI provider (OpenAI or OpenRouter), plus Firecrawl key.
             </p>
           </div>
 
@@ -154,35 +153,6 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
                 Required for web scraping. Get your key from{' '}
                 <a href="https://firecrawl.dev" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                   firecrawl.dev
-                </a>
-              </p>
-            </div>
-
-            {/* Zep Key */}
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Zep API Key <span className="text-red-500 text-xs">*Required</span>
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type={showKeys.zep ? 'text' : 'password'}
-                  value={keys.zep || ''}
-                  onChange={(e) => handleInputChange('zep', e.target.value)}
-                  placeholder="z_..."
-                  className="flex-1 px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary font-mono text-sm"
-                />
-                <button
-                  onClick={() => toggleShowKey('zep')}
-                  className="px-3 py-2 border border-border rounded-md hover:bg-secondary transition-colors"
-                  title={showKeys.zep ? 'Hide' : 'Show'}
-                >
-                  {showKeys.zep ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Required for conversation memory. Get your key from{' '}
-                <a href="https://www.getzep.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                  getzep.com
                 </a>
               </p>
             </div>

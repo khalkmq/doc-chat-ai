@@ -31,10 +31,8 @@ A powerful RAG (Retrieval-Augmented Generation) document chat application that l
 - Docker (recommended) OR
 - Python 3.11+ and Node.js 20+
 - API keys (user-provided via UI):
-  - OpenAI API key
-  - OpenRouter API key
+  - OpenAI API key OR OpenRouter API key
   - Firecrawl API key
-  - Zep API key
 
 ## Running with Docker (Recommended)
 

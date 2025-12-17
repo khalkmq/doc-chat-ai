@@ -15,7 +15,7 @@ router = APIRouter()
 async def create_new_session(request: Request):
     """
     Create a new session with initialized pipeline.
-    Requires: At least one AI key (OpenAI or OpenRouter), Firecrawl, and Zep.
+    Requires: At least one AI key (OpenAI or OpenRouter), and Firecrawl.
     """
     keys = get_api_keys_from_request(request)
     
@@ -28,8 +28,7 @@ async def create_new_session(request: Request):
         session = create_session(
             openai_key=keys["openai"],
             openrouter_key=keys["openrouter"],
-            firecrawl_key=keys["firecrawl"],
-            zep_key=keys["zep"]
+            firecrawl_key=keys["firecrawl"]
         )
         return {
             "session_id": session.session_id,
@@ -52,8 +51,7 @@ async def get_sources(request: Request, x_session_id: Optional[str] = Header(Non
         x_session_id,
         openai_key=keys["openai"],
         openrouter_key=keys["openrouter"],
-        firecrawl_key=keys["firecrawl"],
-        zep_key=keys["zep"]
+        firecrawl_key=keys["firecrawl"]
     )
     if not session:
         raise HTTPException(status_code=404, detail="Session not found or could not be restored")
@@ -81,8 +79,7 @@ async def delete_source(
         x_session_id,
         openai_key=keys["openai"],
         openrouter_key=keys["openrouter"],
-        firecrawl_key=keys["firecrawl"],
-        zep_key=keys["zep"]
+        firecrawl_key=keys["firecrawl"]
     )
     if not session:
         raise HTTPException(status_code=404, detail="Session not found or could not be restored")
@@ -113,8 +110,7 @@ async def verify_session(request: Request, x_session_id: Optional[str] = Header(
         x_session_id,
         openai_key=keys["openai"],
         openrouter_key=keys["openrouter"],
-        firecrawl_key=keys["firecrawl"],
-        zep_key=keys["zep"]
+        firecrawl_key=keys["firecrawl"]
     )
     
     if session:

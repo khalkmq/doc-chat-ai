@@ -20,7 +20,6 @@ api.interceptors.request.use((config) => {
   const sanitizedOpenAI = sanitizeHeaderValue(keys.openai)
   const sanitizedOpenRouter = sanitizeHeaderValue(keys.openrouter)
   const sanitizedFirecrawl = sanitizeHeaderValue(keys.firecrawl)
-  const sanitizedZep = sanitizeHeaderValue(keys.zep)
   
   if (sanitizedOpenAI) {
     config.headers['X-OpenAI-Key'] = sanitizedOpenAI
@@ -30,9 +29,6 @@ api.interceptors.request.use((config) => {
   }
   if (sanitizedFirecrawl) {
     config.headers['X-Firecrawl-Key'] = sanitizedFirecrawl
-  }
-  if (sanitizedZep) {
-    config.headers['X-Zep-Key'] = sanitizedZep
   }
   return config
 })

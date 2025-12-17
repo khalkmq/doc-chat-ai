@@ -14,7 +14,6 @@ from src.embeddings.embedding_generator import EmbeddingGenerator
 from src.vector_database.milvus_vector_db import MilvusVectorDB
 from src.generation.rag import RAGGenerator
 from src.web_scraping.web_scraper import WebScraper
-from src.memory.memory_layer import NotebookMemoryLayer
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,6 @@ class SessionPipeline(BaseModel):
     vector_db: Optional[object] = None
     rag_generator: Optional[object] = None
     web_scraper: Optional[object] = None
-    memory: Optional[object] = None
     sources: list = []
     chat_history: list = []
     
@@ -63,7 +61,7 @@ def _load_session_metadata(session_id: str) -> Optional[dict]:
             return json.load(f)
     return None
 
-def restore_session(session_id: str, openai_key: str = None, openrouter_key: str = None, firecrawl_key: str = None, zep_key: str = None) -> Optional[SessionPipeline]:
+def restore_session(session_id: str, openai_key: str = None, openrouter_key: str = None, firecrawl_key: str = None) -> Optional[SessionPipeline]:
     """Restore a session from existing Milvus database and metadata"""
     # Check if Milvus database exists
     db_path = DATA_DIR / f"milvus_lite_{session_id[:8]}.db"
@@ -98,16 +96,6 @@ def restore_session(session_id: str, openai_key: str = None, openrouter_key: str
             web_scraper = WebScraper(firecrawl_key)
         
         memory = None
-        if zep_key and zep_key != "<YOUR_ZEP_API_KEY>":
-            try:
-                memory = NotebookMemoryLayer(
-                    user_id="api_user",
-                    session_id=session_id,
-                    create_new_session=False  # Don't create new, try to restore
-                )
-            except Exception as e:
-                logger.warning(f"Could not restore Zep memory: {e}")
-        
         # Load sources from metadata if available
         metadata = _load_session_metadata(session_id)
         sources = metadata.get("sources", []) if metadata else []
@@ -119,7 +107,6 @@ def restore_session(session_id: str, openai_key: str = None, openrouter_key: str
             vector_db=vector_db,
             rag_generator=rag_generator,
             web_scraper=web_scraper,
-            memory=memory,
             sources=sources,
             chat_history=[]
         )
@@ -132,7 +119,7 @@ def restore_session(session_id: str, openai_key: str = None, openrouter_key: str
         logger.error(f"Failed to restore session {session_id[:8]}: {e}")
         return None
 
-def create_session(openai_key: str = None, openrouter_key: str = None, firecrawl_key: str = None, zep_key: str = None) -> SessionPipeline:
+def create_session(openai_key: str = None, openrouter_key: str = None, firecrawl_key: str = None) -> SessionPipeline:
     """Create a new session with initialized pipeline"""
     session_id = str(uuid.uuid4())
     
@@ -162,17 +149,6 @@ def create_session(openai_key: str = None, openrouter_key: str = None, firecrawl
         if firecrawl_key and firecrawl_key != "<YOUR_FIRECRAWL_API_KEY>":
             web_scraper = WebScraper(firecrawl_key)
         
-        memory = None
-        if zep_key and zep_key != "<YOUR_ZEP_API_KEY>":
-            try:
-                memory = NotebookMemoryLayer(
-                    user_id="api_user",
-                    session_id=session_id,
-                    create_new_session=True
-                )
-            except Exception as e:
-                logger.warning(f"Could not initialize Zep memory: {e}")
-        
         pipeline = SessionPipeline(
             session_id=session_id,
             doc_processor=doc_processor,
@@ -180,7 +156,6 @@ def create_session(openai_key: str = None, openrouter_key: str = None, firecrawl
             vector_db=vector_db,
             rag_generator=rag_generator,
             web_scraper=web_scraper,
-            memory=memory,
             sources=[],
             chat_history=[]
         )
@@ -197,7 +172,7 @@ def create_session(openai_key: str = None, openrouter_key: str = None, firecrawl
         logger.error(f"Failed to create session: {e}")
         raise
 
-def get_session(session_id: str, openai_key: str = None, openrouter_key: str = None, firecrawl_key: str = None, zep_key: str = None) -> Optional[SessionPipeline]:
+def get_session(session_id: str, openai_key: str = None, openrouter_key: str = None, firecrawl_key: str = None) -> Optional[SessionPipeline]:
     """Get an existing session or restore it from disk if available"""
     # Check in-memory first
     if session_id in _sessions:
@@ -205,7 +180,7 @@ def get_session(session_id: str, openai_key: str = None, openrouter_key: str = N
     
     # Try to restore from disk if not in memory
     logger.info(f"Session {session_id[:8]} not in memory, attempting to restore...")
-    return restore_session(session_id, openai_key, openrouter_key, firecrawl_key, zep_key)
+    return restore_session(session_id, openai_key, openrouter_key, firecrawl_key)
 
 def update_session_sources(session_id: str, sources: list):
     """Update session sources and save metadata (NO API KEYS STORED)"""

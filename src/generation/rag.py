@@ -326,6 +326,7 @@ INSTRUCTIONS:
 - When the user asks factual questions, use both the conversation history AND documents to answer
 - Cite conversation history as [0] and documents as [1], [2], [3], etc.
 - Be helpful and conversational while staying accurate
+
 {conversation_context}
 CONTEXT (with citation references):
 {context}

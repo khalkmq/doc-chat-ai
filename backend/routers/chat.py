@@ -40,7 +40,7 @@ async def chat(
         openai_key=keys["openai"],
         openrouter_key=keys["openrouter"],
         firecrawl_key=keys["firecrawl"],
-        zep_key=keys["zep"]
+
     )
     if not session:
         raise HTTPException(status_code=404, detail="Session not found or could not be restored")
@@ -114,12 +114,5 @@ async def clear_chat_history(x_session_id: Optional[str] = Header(None)):
         raise HTTPException(status_code=404, detail="Session not found")
     
     session.chat_history = []
-    
-    # Clear Zep memory if available
-    if session.memory:
-        try:
-            session.memory.clear_session()
-        except Exception as e:
-            logger.warning(f"Could not clear Zep session: {e}")
     
     return {"message": "Chat history cleared", "session_id": session.session_id}
