@@ -3,10 +3,10 @@ Sources management endpoints
 """
 import logging
 from fastapi import APIRouter, HTTPException, Header, Request
-from typing import Optional
+from typing import Optional, List, Dict, Any
 
 from backend.session import get_session, create_session, delete_session, update_session_sources
-from backend.utils.api_keys import get_api_keys_from_request, get_enabled_features, validate_required_keys
+from backend.utils.api_keys import get_api_keys_from_request, get_enabled_features, validate_required_keys, get_allowed_models, get_key_sources
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -138,3 +138,23 @@ async def delete_current_session(x_session_id: Optional[str] = Header(None)):
         return {"message": "Session deleted", "session_id": x_session_id}
     else:
         raise HTTPException(status_code=404, detail="Session not found")
+
+@router.get("/models")
+async def get_available_models(request: Request) -> Dict[str, Any]:
+    """
+    Get available models based on configured API keys and key source.
+    Server keys: restricted to budget models
+    User keys: unrestricted access to all models
+    """
+    keys = get_api_keys_from_request(request)
+    key_sources = get_key_sources(request)
+    allowed_models = get_allowed_models(request)
+    
+    return {
+        "key_sources": key_sources,
+        "allowed_models": allowed_models,
+        "has_restrictions": (
+            (keys["openai"] and key_sources["openai"] == "server") or
+            (keys["openrouter"] and key_sources["openrouter"] == "server")
+        )
+    }

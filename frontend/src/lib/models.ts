@@ -58,18 +58,28 @@ export const OPENROUTER_MODELS: Model[] = [
 
 /**
  * Get available models based on which API key is configured
+ * and what restrictions apply (server vs user keys)
  */
-export function getAvailableModels(keys: { openai?: string; openrouter?: string }): Model[] {
+export function getAvailableModels(
+  keys: { openai?: string; openrouter?: string },
+  allowedModels?: { openai: string[] | null; openrouter: string[] | null }
+): Model[] {
   const models: Model[] = []
   
   // Add OpenAI models if key is configured
   if (keys.openai) {
-    models.push(...OPENAI_MODELS)
+    const openaiModels = allowedModels?.openai 
+      ? OPENAI_MODELS.filter(m => allowedModels.openai!.includes(m.id))
+      : OPENAI_MODELS
+    models.push(...openaiModels)
   }
   
   // Add OpenRouter models if key is configured
   if (keys.openrouter) {
-    models.push(...OPENROUTER_MODELS)
+    const openrouterModels = allowedModels?.openrouter
+      ? OPENROUTER_MODELS.filter(m => allowedModels.openrouter!.includes(m.id))
+      : OPENROUTER_MODELS
+    models.push(...openrouterModels)
   }
   
   return models

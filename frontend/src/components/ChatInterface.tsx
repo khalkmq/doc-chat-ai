@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, JSX } from 'react'
 import { Send, Trash2, ChevronDown } from 'lucide-react'
-import { sendChatMessage, getChatHistory, clearChatHistory, type ChatMessage } from '@/lib/api'
+import { sendChatMessage, getChatHistory, clearChatHistory, getAllowedModels, type ChatMessage } from '@/lib/api'
 import { getApiKeys } from '@/lib/apiKeys'
 import { getAvailableModels, getSelectedModel, setSelectedModel, getDefaultModel } from '@/lib/models'
 
@@ -99,11 +99,32 @@ export default function ChatInterface({ sessionId, sources }: ChatInterfaceProps
   const [isStreaming, setIsStreaming] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
-  // Model selection
+  // Model selection with server-side restrictions
   const keys = getApiKeys()
-  const availableModels = getAvailableModels(keys)
+  const [allowedModelsData, setAllowedModelsData] = useState<{ openai: string[] | null; openrouter: string[] | null } | null>(null)
+  const [isLoadingModels, setIsLoadingModels] = useState(true)
+  
+  // Fetch allowed models from server on mount
+  useEffect(() => {
+    getAllowedModels()
+      .then(data => {
+        setAllowedModelsData(data.allowed_models)
+        setIsLoadingModels(false)
+      })
+      .catch(err => {
+        console.error('Failed to fetch allowed models:', err)
+        setIsLoadingModels(false)
+      })
+  }, [])
+  
+  const availableModels = getAvailableModels(
+    // If no user keys, use dummy keys to show server models
+    keys.openai || keys.openrouter ? keys : { openai: 'server', openrouter: 'server' },
+    allowedModelsData || undefined
+  )
+  
   const [selectedModel, setSelectedModelState] = useState<string>(
-    getSelectedModel() || getDefaultModel(keys)
+    getSelectedModel() || getDefaultModel(keys.openai || keys.openrouter ? keys : { openai: 'server', openrouter: 'server' })
   )
   const [showModelDropdown, setShowModelDropdown] = useState(false)
 

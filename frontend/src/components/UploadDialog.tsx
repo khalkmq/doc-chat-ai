@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Upload, Link, FileText, AlertCircle, Loader2 } from 'lucide-react'
 import { uploadFile, uploadText, uploadURLs } from '@/lib/api'
-import { getEnabledFeatures } from '@/lib/apiKeys'
 
 interface UploadDialogProps {
   sessionId: string
@@ -16,8 +15,6 @@ export default function UploadDialog({ sessionId, onSourceAdded, onClose }: Uplo
   const [isUploading, setIsUploading] = useState(false)
   const [textContent, setTextContent] = useState('')
   const [urlsText, setUrlsText] = useState('')
-  
-  const features = getEnabledFeatures()
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -95,41 +92,27 @@ export default function UploadDialog({ sessionId, onSourceAdded, onClose }: Uplo
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-border">
         {[
-          { key: 'file', label: 'Upload Files', icon: Upload, enabled: features.chat },
-          { key: 'url', label: 'Website', icon: Link, enabled: features.webScraping },
-          { key: 'text', label: 'Raw Text', icon: FileText, enabled: features.chat }
+          { key: 'file', label: 'Upload Files', icon: Upload },
+          { key: 'url', label: 'Website', icon: Link },
+          { key: 'text', label: 'Raw Text', icon: FileText }
         ].map(tab => {
           const Icon = tab.icon
           return (
             <button
               key={tab.key}
-              onClick={() => tab.enabled && setActiveTab(tab.key as any)}
-              disabled={!tab.enabled}
+              onClick={() => setActiveTab(tab.key as any)}
               className={`flex items-center gap-2 px-4 py-2 border-b-2 transition-colors ${
                 activeTab === tab.key
                   ? 'border-primary text-primary'
-                  : tab.enabled
-                  ? 'border-transparent text-muted-foreground hover:text-foreground'
-                  : 'border-transparent text-muted-foreground/50 cursor-not-allowed'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
               <Icon className="w-4 h-4" />
               {tab.label}
-              {!tab.enabled && <span className="text-xs">(Key Required)</span>}
             </button>
           )
         })}
       </div>
-      
-      {!features.chat && !features.webScraping && (
-        <div className="mb-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-md flex items-start gap-2">
-          <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-yellow-600 dark:text-yellow-400">
-            <strong>API Keys Required:</strong> Please configure your OpenAI API key in Settings to upload files and text, 
-            or your Firecrawl API key to scrape websites.
-          </p>
-        </div>
-      )}
 
       {/* File Upload */}
       {activeTab === 'file' && (

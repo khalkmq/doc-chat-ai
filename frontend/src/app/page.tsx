@@ -24,27 +24,18 @@ export default function Home() {
   const [isResizing, setIsResizing] = useState(false)
 
   useEffect(() => {
-    // Check if user has API keys configured
-    if (!hasAnyKeys()) {
-      setHasConfiguredKeys(false)
-      setShowWelcome(true)
-      setIsLoading(false)
-      return
-    }
-
-    setHasConfiguredKeys(true)
-    setShowWelcome(false)
-
     const initSession = async () => {
       const storedSessionId = localStorage.getItem('docchat_session_id')
       
-      // Try to restore existing session
+      // Try to restore existing session first (regardless of key configuration)
       if (storedSessionId) {
         console.log('Checking stored session:', storedSessionId)
         const result = await verifySession(storedSessionId)
         
         if (result.valid) {
           setSessionId(storedSessionId)
+          setHasConfiguredKeys(true) // User has already started
+          setShowWelcome(false)
           setIsLoading(false)
           console.log('Restored existing session:', storedSessionId, 'with', result.sources_count, 'sources')
           return
@@ -54,7 +45,20 @@ export default function Home() {
         }
       }
       
-      // Create new session if no valid stored session
+      // No valid stored session - check if user has configured keys or chosen limited mode
+      if (!hasConfiguredKeys && !hasAnyKeys()) {
+        setShowWelcome(true)
+        setIsLoading(false)
+        return
+      }
+      
+      // User has keys or has chosen to proceed - mark as configured
+      if (!hasConfiguredKeys) {
+        setHasConfiguredKeys(true)
+      }
+      setShowWelcome(false)
+      
+      // Create new session
       try {
         const data = await createSession()
         setSessionId(data.session_id)
@@ -70,7 +74,7 @@ export default function Home() {
     }
 
     initSession()
-  }, [])
+  }, [hasConfiguredKeys])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -146,6 +150,13 @@ export default function Home() {
       <>
         <WelcomeScreen 
           onConfigure={() => setShowSettingsModal(true)}
+          onStartLimited={() => {
+            // User wants to proceed with limited usage using server keys
+            setShowWelcome(false)
+            setHasConfiguredKeys(true)
+            setIsLoading(false)
+            // This will trigger the useEffect to create a session
+          }}
         />
         <SettingsModal
           isOpen={showSettingsModal}

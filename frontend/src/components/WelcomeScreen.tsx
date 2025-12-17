@@ -4,9 +4,10 @@ import { Brain, Key, FileText, MessageSquare, Sparkles, Github } from 'lucide-re
 
 interface WelcomeScreenProps {
   onConfigure: () => void
+  onStartLimited: () => void
 }
 
-export default function WelcomeScreen({ onConfigure }: WelcomeScreenProps) {
+export default function WelcomeScreen({ onConfigure, onStartLimited }: WelcomeScreenProps) {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <div className="max-w-2xl w-full space-y-8">
@@ -51,31 +52,41 @@ export default function WelcomeScreen({ onConfigure }: WelcomeScreenProps) {
 
           <div className="p-6 bg-card border border-border rounded-lg space-y-2">
             <Key className="w-8 h-8 text-primary" />
-            <h3 className="font-semibold">Privacy First</h3>
+            <h3 className="font-semibold">Multi-Provider AI</h3>
             <p className="text-sm text-muted-foreground">
-              Your API keys stay in your browser, never stored on our servers
+              Choose from OpenAI or OpenRouter
             </p>
           </div>
         </div>
 
         {/* CTA */}
         <div className="text-center space-y-4">
-          <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <p className="text-sm text-yellow-200">
-              To get started, you'll need to configure your API keys
+          <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+            <p className="text-sm text-blue-200">
+              <strong>Ready to go!</strong> Optionally add your own keys for full model access.
             </p>
           </div>
 
-          <button
-            onClick={onConfigure}
-            className="px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium text-lg inline-flex items-center gap-2"
-          >
-            <Key className="w-5 h-5" />
-            Configure API Keys
-          </button>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={onStartLimited}
+              className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-lg inline-flex items-center gap-2"
+            >
+              <Sparkles className="w-5 h-5" />
+              Start with Limited Usage
+            </button>
+
+            <button
+              onClick={onConfigure}
+              className="px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium text-lg inline-flex items-center gap-2"
+            >
+              <Key className="w-5 h-5" />
+              Configure API Keys (Optional)
+            </button>
+          </div>
 
           <p className="text-xs text-muted-foreground">
-            Required: OpenAI or OpenRouter, and Firecrawl API keys
+            Server keys available: Budget models included. Add your own keys for unrestricted access.
           </p>
 
           <a

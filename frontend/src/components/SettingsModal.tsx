@@ -60,12 +60,12 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
 
           <p className="text-sm text-muted-foreground mb-6">
             Your API keys are stored locally in your browser and sent with each request. 
-            DocChat never stores your keys on the server.
+            If no keys are provided, server keys will be used (with limited model access).
           </p>
 
-          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6">
-            <p className="text-sm text-yellow-200">
-              <strong>Required:</strong> At least one AI provider (OpenAI or OpenRouter), plus Firecrawl key.
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mb-6">
+            <p className="text-sm text-blue-200">
+              <strong>Optional:</strong> Provide your own API keys for full model access, or leave empty to use server keys with budget models only.
             </p>
           </div>
 
@@ -73,7 +73,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">
-                OpenAI API Key <span className="text-muted-foreground text-xs">(Choose at least one: OpenAI / OpenRouter)</span>
+                OpenAI API Key <span className="text-muted-foreground text-xs">(Optional - leave empty to use server key)</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -102,7 +102,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
             {/* OpenRouter Key */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                OpenRouter API Key <span className="text-muted-foreground text-xs">(Choose at least one: OpenAI / OpenRouter)</span>
+                OpenRouter API Key <span className="text-muted-foreground text-xs">(Optional - leave empty to use server key)</span>
               </label>
               <div className="flex gap-2">
                 <input
@@ -131,7 +131,7 @@ export default function SettingsModal({ isOpen, onClose, onSave }: SettingsModal
             {/* Firecrawl Key */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                Firecrawl API Key <span className="text-red-500 text-xs">*Required</span>
+                Firecrawl API Key <span className="text-muted-foreground text-xs">(Optional - leave empty to use server key)</span>
               </label>
               <div className="flex gap-2">
                 <input

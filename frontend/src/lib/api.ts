@@ -182,4 +182,22 @@ export async function generatePodcast(
   return response.data
 }
 
+export interface AllowedModelsResponse {
+  key_sources: {
+    openai: 'user' | 'server'
+    openrouter: 'user' | 'server'
+    firecrawl: 'user' | 'server'
+  }
+  allowed_models: {
+    openai: string[] | null  // null = all allowed
+    openrouter: string[] | null  // null = all allowed
+  }
+  has_restrictions: boolean
+}
+
+export async function getAllowedModels(): Promise<AllowedModelsResponse> {
+  const response = await api.get('/models')
+  return response.data
+}
+
 export default api

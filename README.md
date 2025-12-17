@@ -30,9 +30,35 @@ A powerful RAG (Retrieval-Augmented Generation) document chat application that l
 
 - Docker (recommended) OR
 - Python 3.11+ and Node.js 20+
-- API keys (user-provided via UI):
-  - OpenAI API key OR OpenRouter API key
-  - Firecrawl API key
+- API Keys:
+  - **OpenAI API key** OR **OpenRouter API key** (at least one required)
+  - **Firecrawl API key** (optional, only needed for web scraping)
+
+## Setup
+
+### 1. Configure Environment Variables
+
+**IMPORTANT:** Before running the application, you must create a `.env` file in the project root with your API keys.
+
+1. Copy the example file:
+
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` and add your API keys:
+
+```bash
+OPENAI_API_KEY=sk-proj-your-openai-key-here
+OPENROUTER_API_KEY=sk-or-v1-your-openrouter-key-here
+FIRECRAWL_API_KEY=fc-your-firecrawl-key-here
+```
+
+**Note:**
+
+- You need at least one AI provider key (OpenAI OR OpenRouter)
+- Firecrawl is optional (only needed for web scraping feature)
+- Never commit the `.env` file to git (already in `.gitignore`)
 
 ## Running with Docker (Recommended)
 
@@ -50,10 +76,13 @@ This creates an optimized multi-stage build (~1.9GB).
 docker run -d \
   -p 8000:8000 \
   --name doc-chat \
+  --env-file .env \
   doc-chat
 ```
 
 The app will be available at **http://localhost:8000**
+
+**Important:** The `--env-file .env` flag loads your API keys into the container. Without this, the app won't work.
 
 **Note:** Due to Milvus Lite limitations with Docker volumes, data persistence in local Docker requires using the container's filesystem. For production deployments (Railway, Render), use their native persistent disk features which work correctly.
 
