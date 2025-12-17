@@ -98,6 +98,7 @@ export default function ChatInterface({ sessionId, sources }: ChatInterfaceProps
   const [streamingMessage, setStreamingMessage] = useState<string>('')
   const [isStreaming, setIsStreaming] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   
   // Model selection with server-side restrictions
   const keys = getApiKeys()
@@ -178,12 +179,19 @@ export default function ChatInterface({ sessionId, sources }: ChatInterfaceProps
 
     const userMessage: ChatMessage = { role: 'user', content: input }
     setMessages(prev => [...prev, userMessage])
+    const messageToSend = input
     setInput('')
+    
+    // Keep focus on input immediately after clearing
+    requestAnimationFrame(() => {
+      inputRef.current?.focus()
+    })
+    
     setIsSending(true)
 
     try {
       const useConversationHistory = localStorage.getItem('chatMemory') !== 'false' // default to true
-      const response = await sendChatMessage(sessionId, input, selectedModel, useConversationHistory)
+      const response = await sendChatMessage(sessionId, messageToSend, selectedModel, useConversationHistory)
       streamText(response.response, response.sources)
     } catch (error: any) {
       console.error('Chat error:', error)
@@ -339,13 +347,14 @@ export default function ChatInterface({ sessionId, sources }: ChatInterfaceProps
           </div>
 
           <input
+            ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            onKeyPress={(e) => e.key === 'Enter' && !isSending && handleSend()}
             placeholder="Ask me anything about your sources..."
             className="flex-1 px-4 py-2.5 bg-secondary text-foreground rounded-md border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-            disabled={isSending}
+
           />
           <button
             onClick={handleSend}
