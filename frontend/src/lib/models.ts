@@ -13,26 +13,47 @@ export interface Model {
   }
 }
 
-// OpenAI Models (GPT-5 Series + Legacy)
+// OpenAI Models (curated for RAG/document chat) (GPT-5 Series + Legacy)
 export const OPENAI_MODELS: Model[] = [
-  { id: 'gpt-5.2', name: 'GPT-5.2 (Direct)', provider: 'OpenAI Direct', context_length: 200000 },
-  { id: 'gpt-5-mini', name: 'GPT-5 Mini (Direct)', provider: 'OpenAI Direct', context_length: 200000 },
-  { id: 'gpt-5-nano', name: 'GPT-5 Nano (Direct)', provider: 'OpenAI Direct', context_length: 128000 },
-  { id: 'gpt-4.1', name: 'GPT-4.1 (Direct)', provider: 'OpenAI Direct', context_length: 128000 },
-  { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Direct)', provider: 'OpenAI Direct', context_length: 128000 },
+  { id: 'gpt-5.2', name: 'GPT-5.2 (Direct)', provider: 'OpenAI Direct', context_length: 200000, pricing: { prompt: 1.75, completion: 14 } },
+  { id: 'gpt-5-mini', name: 'GPT-5 Mini (Direct)', provider: 'OpenAI Direct', context_length: 200000, pricing: { prompt: 0.25, completion: 2 } },
+  { id: 'gpt-5-nano', name: 'GPT-5 Nano (Direct)', provider: 'OpenAI Direct', context_length: 128000, pricing: { prompt: 0.10, completion: 0.80 } },
+  { id: 'gpt-4.1', name: 'GPT-4.1 (Direct)', provider: 'OpenAI Direct', context_length: 128000, pricing: { prompt: 3, completion: 12 } },
+  { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Direct)', provider: 'OpenAI Direct', context_length: 128000, pricing: { prompt: 0.15, completion: 0.60 } },
 ]
 
-// OpenRouter Models (popular ones for RAG)
+// OpenRouter Models (curated for RAG/document chat)
 export const OPENROUTER_MODELS: Model[] = [
-  { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI via OpenRouter', context_length: 128000 },
-  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic via OpenRouter', context_length: 200000 },
-  { id: 'anthropic/claude-3-haiku', name: 'Claude 3 Haiku', provider: 'Anthropic via OpenRouter', context_length: 200000 },
-  { id: 'google/gemini-pro-1.5', name: 'Gemini 1.5 Pro', provider: 'Google via OpenRouter', context_length: 2000000 },
-  { id: 'google/gemini-flash-1.5', name: 'Gemini 1.5 Flash', provider: 'Google via OpenRouter', context_length: 1000000 },
-  { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', provider: 'Meta via OpenRouter', context_length: 131072 },
-  { id: 'meta-llama/llama-3.1-8b-instruct', name: 'Llama 3.1 8B', provider: 'Meta via OpenRouter', context_length: 131072 },
-  { id: 'mistralai/mistral-large', name: 'Mistral Large', provider: 'Mistral AI via OpenRouter', context_length: 128000 },
-  { id: 'cohere/command-r-plus', name: 'Command R+', provider: 'Cohere via OpenRouter', context_length: 128000 },
+  // GPT-5 Series via OpenRouter (Best Performance)
+  { id: 'openai/gpt-5.2', name: 'GPT-5.2', provider: 'OpenAI via OpenRouter', context_length: 400000, pricing: { prompt: 1.75, completion: 14 } },
+  { id: 'openai/gpt-5.2-chat', name: 'GPT-5.2 Chat (Fast)', provider: 'OpenAI via OpenRouter', context_length: 128000, pricing: { prompt: 1.75, completion: 14 } },
+  
+  // Budget Options (GPT-4 Era)
+  { id: 'openai/gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI via OpenRouter', context_length: 128000, pricing: { prompt: 0.15, completion: 0.60 } },
+
+  // Anthropic Claude 4.5 Series (Latest - Frontier Models)
+  { id: 'anthropic/claude-sonnet-4.5', name: 'Claude Sonnet 4.5', provider: 'Anthropic via OpenRouter', context_length: 1000000, pricing: { prompt: 3, completion: 15 } },
+  { id: 'anthropic/claude-opus-4.5', name: 'Claude Opus 4.5 (Premium)', provider: 'Anthropic via OpenRouter', context_length: 200000, pricing: { prompt: 5, completion: 25 } },
+  { id: 'anthropic/claude-haiku-4.5', name: 'Claude Haiku 4.5 (Fast)', provider: 'Anthropic via OpenRouter', context_length: 200000, pricing: { prompt: 1, completion: 5 } },
+  
+  // Google Gemini 2.x/3.x (Latest - Massive Context + Reasoning)
+  { id: 'google/gemini-3-pro-preview', name: 'Gemini 3 Pro Preview', provider: 'Google via OpenRouter', context_length: 1050000, pricing: { prompt: 2, completion: 12 } },
+  { id: 'google/gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'Google via OpenRouter', context_length: 1050000, pricing: { prompt: 1.25, completion: 10 } },
+  { id: 'google/gemini-2.5-flash', name: 'Gemini 2.5 Flash (Fast)', provider: 'Google via OpenRouter', context_length: 1050000, pricing: { prompt: 0.30, completion: 2.50 } },
+
+  // DeepSeek (Ultra Budget - Strong Reasoning)
+  { id: 'deepseek/deepseek-v3.2', name: 'DeepSeek V3.2', provider: 'DeepSeek via OpenRouter', context_length: 164000, pricing: { prompt: 0.24, completion: 0.38 } },
+
+  // Qwen (Alibaba - Strong Performance)
+  { id: 'qwen/qwen3-235b-a22b-2507', name: 'Qwen3 235B (MoE)', provider: 'Alibaba via OpenRouter', context_length: 262000, pricing: { prompt: 0.071, completion: 0.463 } },
+  { id: 'qwen/qwen3-32b', name: 'Qwen3 32B', provider: 'Alibaba via OpenRouter', context_length: 41000, pricing: { prompt: 0.08, completion: 0.24 } },
+
+  // Free Models (Budget Friendly)
+  { id: 'xiaomi/mimo-v2-flash:free', name: 'MiMo V2 Flash (Free)', provider: 'Xiaomi via OpenRouter', context_length: 262000, pricing: { prompt: 0, completion: 0 } },
+  
+  // Open Source Options
+  { id: 'meta-llama/llama-3.1-70b-instruct', name: 'Llama 3.1 70B', provider: 'Meta via OpenRouter', context_length: 131072, pricing: { prompt: 0.35, completion: 0.40 } },
+  { id: 'mistralai/mistral-large', name: 'Mistral Large', provider: 'Mistral AI via OpenRouter', context_length: 128000, pricing: { prompt: 2, completion: 6 } },
 ]
 
 /**
@@ -74,7 +95,7 @@ export function setSelectedModel(modelId: string): void {
  */
 export function getDefaultModel(keys: { openai?: string; openrouter?: string }): string {
   if (keys.openrouter) {
-    return 'openai/gpt-4o-mini' // Default for OpenRouter (GPT-5 not available yet)
+    return 'openai/gpt-4o-mini' // Budget-friendly default for OpenRouter
   } else if (keys.openai) {
     return 'gpt-5-mini' // Default for OpenAI Direct
   }

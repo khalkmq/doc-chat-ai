@@ -87,7 +87,7 @@ export function clearApiKeys(): void {
  */
 export function hasAnyKeys(): boolean {
   const keys = getApiKeys()
-  return !!(keys.openai || keys.firecrawl || keys.zep)
+  return !!(keys.openai || keys.openrouter || keys.firecrawl || keys.zep)
 }
 
 /**
@@ -100,7 +100,7 @@ export function getEnabledFeatures(): {
 } {
   const keys = getApiKeys()
   return {
-    chat: !!keys.openai,
+    chat: !!(keys.openai || keys.openrouter), // Either OpenAI or OpenRouter enables chat
     webScraping: !!keys.firecrawl,
     memory: !!keys.zep
   }

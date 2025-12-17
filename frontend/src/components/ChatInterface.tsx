@@ -259,12 +259,12 @@ export default function ChatInterface({ sessionId, sources }: ChatInterfaceProps
 
       {/* Input */}
       <div className="border-t border-border px-6 py-4">
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2 items-stretch">
           {/* Model Selector */}
           <div className="relative">
             <button
               onClick={() => setShowModelDropdown(!showModelDropdown)}
-              className="px-3 py-2 bg-secondary text-foreground rounded-md border border-border hover:bg-secondary/80 transition-colors flex items-center gap-2 min-w-[200px] justify-between"
+              className="h-full px-3 py-2.5 bg-secondary text-foreground rounded-md border border-border hover:bg-secondary/80 transition-colors flex items-center gap-2 min-w-[200px] justify-between"
               title="Select AI Model"
             >
               <span className="text-sm truncate">
@@ -292,6 +292,18 @@ export default function ChatInterface({ sessionId, sources }: ChatInterfaceProps
                         {model.provider}
                         {model.context_length && ` • ${(model.context_length / 1000).toFixed(0)}K context`}
                       </div>
+                      {model.pricing && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {model.pricing.prompt === 0 && model.pricing.completion === 0 ? (
+                            <span className="text-green-500 font-semibold">FREE</span>
+                          ) : (
+                            <>
+                              <div>${model.pricing.prompt.toFixed(2)}/M input tokens</div>
+                              <div>${model.pricing.completion.toFixed(2)}/M output tokens</div>
+                            </>
+                          )}
+                        </div>
+                      )}
                     </button>
                   ))}
                   {availableModels.length === 0 && (
@@ -310,13 +322,13 @@ export default function ChatInterface({ sessionId, sources }: ChatInterfaceProps
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Ask me anything about your sources..."
-            className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 px-4 py-2.5 bg-secondary text-foreground rounded-md border border-border focus:outline-none focus:ring-2 focus:ring-primary"
             disabled={isSending}
           />
           <button
             onClick={handleSend}
             disabled={isSending || !input.trim()}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            className="px-4 py-2.5 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 transition-colors"
           >
             <Send className="w-5 h-5" />
           </button>
