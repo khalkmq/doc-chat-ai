@@ -42,6 +42,11 @@ export default function Home() {
         } else {
           console.log('Stored session could not be restored:', result.message)
           localStorage.removeItem('docchat_session_id')
+          // Session invalid - show welcome screen to start fresh
+          setHasConfiguredKeys(false)
+          setShowWelcome(true)
+          setIsLoading(false)
+          return
         }
       }
       
