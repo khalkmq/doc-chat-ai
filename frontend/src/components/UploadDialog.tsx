@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Upload, Link, FileText, AlertCircle } from 'lucide-react'
+import { Upload, Link, FileText, AlertCircle, Loader2 } from 'lucide-react'
 import { uploadFile, uploadText, uploadURLs } from '@/lib/api'
 import { getEnabledFeatures } from '@/lib/apiKeys'
 
@@ -77,7 +77,7 @@ export default function UploadDialog({ sessionId, onSourceAdded, onClose }: Uplo
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-2xl font-bold">📁 Add sources</h2>
+        <h2 className="text-2xl font-bold">Add sources</h2>
         {onClose && (
           <button
             onClick={onClose}
@@ -150,6 +150,12 @@ export default function UploadDialog({ sessionId, onSourceAdded, onClose }: Uplo
                 disabled:opacity-50"
             />
           </label>
+          {isUploading && (
+            <div className="mt-4 flex items-center gap-2 text-primary">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span className="text-sm font-medium">Processing files...</span>
+            </div>
+          )}
           <p className="mt-2 text-sm text-muted-foreground">
             Supported: PDF, .txt, Markdown
           </p>
@@ -169,8 +175,9 @@ export default function UploadDialog({ sessionId, onSourceAdded, onClose }: Uplo
           <button
             onClick={handleURLUpload}
             disabled={isUploading || !urlsText.trim()}
-            className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50"
+            className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2"
           >
+            {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isUploading ? 'Processing...' : 'Process URLs'}
           </button>
         </div>
@@ -189,8 +196,9 @@ export default function UploadDialog({ sessionId, onSourceAdded, onClose }: Uplo
           <button
             onClick={handleTextUpload}
             disabled={isUploading || !textContent.trim()}
-            className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50"
+            className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2"
           >
+            {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
             {isUploading ? 'Processing...' : 'Process Text'}
           </button>
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Brain, Key, FileText, MessageSquare, Sparkles } from 'lucide-react'
+import { Brain, Key, FileText, MessageSquare, Sparkles, Github } from 'lucide-react'
 
 interface WelcomeScreenProps {
   onConfigure: () => void
@@ -77,6 +77,16 @@ export default function WelcomeScreen({ onConfigure }: WelcomeScreenProps) {
           <p className="text-xs text-muted-foreground">
             Required: OpenAI or OpenRouter, Firecrawl, and Zep API keys
           </p>
+
+          <a
+            href="https://github.com/khalkmq/doc-chat-ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mt-4"
+          >
+            <Github className="w-4 h-4" />
+            Learn more about this project
+          </a>
         </div>
       </div>
     </div>
