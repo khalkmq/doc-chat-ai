@@ -15,6 +15,7 @@ router = APIRouter()
 class ChatRequest(BaseModel):
     query: str
     model: Optional[str] = None
+    use_conversation_history: bool = True
 
 class ChatResponse(BaseModel):
     response: str
@@ -51,8 +52,18 @@ async def chat(
         raise HTTPException(status_code=400, detail="No sources uploaded. Upload documents first.")
     
     try:
-        # Generate response using RAG with specified model
-        result = session.rag_generator.generate_response(request.query, model=request.model)
+        # Log chat history before generating response
+        logger.info(f"Chat history length: {len(session.chat_history)}")
+        if session.chat_history:
+            logger.info(f"Last message in history: {session.chat_history[-1].get('role', 'unknown')}")
+        logger.info(f"Use conversation history: {request.use_conversation_history}")
+        
+        # Generate response using RAG with specified model and chat history
+        result = session.rag_generator.generate_response(
+            request.query, 
+            model=request.model,
+            chat_history=session.chat_history if request.use_conversation_history else None
+        )
         
         # Add to chat history
         session.chat_history.append({

@@ -161,7 +161,8 @@ export default function ChatInterface({ sessionId, sources }: ChatInterfaceProps
     setIsSending(true)
 
     try {
-      const response = await sendChatMessage(sessionId, input, selectedModel)
+      const useConversationHistory = localStorage.getItem('chatMemory') !== 'false' // default to true
+      const response = await sendChatMessage(sessionId, input, selectedModel, useConversationHistory)
       streamText(response.response, response.sources)
     } catch (error: any) {
       console.error('Chat error:', error)

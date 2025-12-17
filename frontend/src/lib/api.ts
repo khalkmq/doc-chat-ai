@@ -119,10 +119,10 @@ export async function uploadURLs(sessionId: string, urls: string[]) {
   return response.data
 }
 
-export async function sendChatMessage(sessionId: string, query: string, model?: string) {
+export async function sendChatMessage(sessionId: string, query: string, model?: string, useConversationHistory: boolean = true) {
   const response = await api.post(
     '/chat',
-    { query, model },
+    { query, model, use_conversation_history: useConversationHistory },
     {
       headers: {
         'X-Session-Id': sessionId,

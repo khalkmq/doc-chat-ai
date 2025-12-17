@@ -94,7 +94,8 @@ class RAGGenerator:
         max_chunks: int = 8,
         max_context_chars: int = 4000,
         top_k: int = 10,
-        model: str = None
+        model: str = None,
+        chat_history: list = None
     ) -> RAGResult:
 
         if not query.strip():
@@ -128,8 +129,21 @@ class RAGGenerator:
                 search_results, max_chunks, max_context_chars
             )
             
+            # Step 2.5: Add conversation history as source [0] if it exists
+            if chat_history and len(chat_history) > 0:
+                conversation_source = {
+                    'source_file': 'Conversation History',
+                    'source_type': 'conversation',
+                    'reference': '[0]',
+                    'chunk_count': len(chat_history),
+                    'page_number': None,
+                    'url': None
+                }
+                # Insert at the beginning so it's [0]
+                sources_info.insert(0, conversation_source)
+            
             # Step 3: Create citation-aware prompt
-            prompt = self._create_rag_prompt(query, context)
+            prompt = self._create_rag_prompt(query, context, chat_history)
             
             # Step 4: Generate response with specified model
             if model:
@@ -177,9 +191,11 @@ class RAGGenerator:
                     llm_params["temperature"] = self.temperature
                 
                 llm_for_request = LLM(**llm_params)
+                logger.info(f"Calling LLM with prompt length: {len(prompt)} chars")
                 response = llm_for_request.call(prompt)
                 logger.info(f"Generated response with model: {model} via {'OpenRouter' if '/' in model else 'OpenAI Direct'}")
             else:
+                logger.info(f"Calling default LLM with prompt length: {len(prompt)} chars")
                 response = self.llm.call(prompt)
             
             # Step 5: Create result object
@@ -264,8 +280,13 @@ class RAGGenerator:
 
         return formatted_context, sources_info
     
-    def _create_rag_prompt(self, query: str, context: str) -> str:
-        prompt = f"""You are an AI assistant that answers questions based on provided source material. You must follow these citation rules:
+    def _create_rag_prompt(self, query: str, context: str, chat_history: list = None) -> str:
+        # Format chat history if provided (exclude the current query)
+        conversation_context = ""
+        
+        # If chat history is disabled or empty, use strict document-only mode
+        if not chat_history or len(chat_history) == 0:
+            prompt = f"""You are an AI assistant that answers questions based on provided source material. You must follow these citation rules:
 
 CITATION REQUIREMENTS:
 1. For each factual claim in your answer, include the citation reference number in square brackets [1], [2], etc.
@@ -280,6 +301,36 @@ CONTEXT (with citation references):
 QUESTION: {query}
 
 Please provide a comprehensive answer with proper citations. Make sure every factual statement is supported by a citation reference."""
+            logger.info("Using strict document-only prompt (no conversation context)")
+            return prompt
+        
+        # Conversational mode with chat history
+        if chat_history and len(chat_history) > 0:
+            logger.info(f"Formatting {len(chat_history)} messages from chat history")
+            conversation_context = "\n\nPREVIOUS CONVERSATION:\n"
+            for msg in chat_history:
+                role = msg.get('role', '').upper()
+                content = msg.get('content', '')
+                if role == 'USER':
+                    conversation_context += f"User: {content}\n"
+                elif role == 'ASSISTANT':
+                    conversation_context += f"Assistant: {content}\n"
+            logger.info(f"Conversation context length: {len(conversation_context)} chars")
+        
+        prompt = f"""You are an AI assistant that answers questions based on documents and conversation history.
+
+INSTRUCTIONS:
+- When the user shares information (statements like "I like X" or "My name is Y"), acknowledge it briefly
+- When the user asks questions, use both the conversation history AND documents to answer
+- Cite conversation history as [0] and documents as [1], [2], [3], etc.
+- Be helpful and conversational while staying accurate
+{conversation_context}
+CONTEXT (with citation references):
+{context}
+
+USER INPUT: {query}
+
+Provide a helpful answer using the conversation history and documents above. Use [0] for conversation facts and [1], [2], etc. for document citations."""
         
         return prompt
     
