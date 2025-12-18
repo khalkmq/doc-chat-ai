@@ -2,7 +2,7 @@
 
 A powerful RAG (Retrieval-Augmented Generation) document chat application that lets you upload documents and have intelligent conversations with them using multiple AI providers.
 
-📖 **[View Technical Architecture Documentation](ARCHITECTURE.md)** - Detailed explanation of how everything works under the hood
+� **[Try the Live Demo](https://doc-chat-ai-production.up.railway.app/)** | 📖 **[Technical Architecture](ARCHITECTURE.md)**
 
 ## Features
 
