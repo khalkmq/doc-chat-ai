@@ -2,6 +2,8 @@
 
 A powerful RAG (Retrieval-Augmented Generation) document chat application that lets you upload documents and have intelligent conversations with them using multiple AI providers.
 
+📖 **[View Technical Architecture Documentation](ARCHITECTURE.md)** - Detailed explanation of how everything works under the hood
+
 ## Features
 
 - **Multi-Provider AI Support**: OpenAI Direct + OpenRouter Models
@@ -131,7 +133,7 @@ Visit **http://localhost:3000** for local development.
 4. **Start Chatting**: Ask questions about your documents
 5. **View Citations**: Click citation numbers to see source context
 
-## Architecture
+## Architecture Features
 
 - **Single Port Deployment**: Port 8000 serves both API (`/api/*`) and frontend static files (`/`)
 - **Client-Side API Keys**: Keys stored in browser localStorage, never on server
