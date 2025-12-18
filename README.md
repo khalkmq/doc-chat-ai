@@ -168,9 +168,3 @@ Visit **http://localhost:3000** for local development.
 - **Milvus Databases**: `data/milvus_lite_*.db` (one per session)
 - **Session Metadata**: `session_metadata/*.json` (session ID + sources)
 - **Volume Mounting**: Required for data survival across restarts
-
-## Security
-
-- No API keys stored on server or in git
-- Client-side key management via localStorage
-- `.dockerignore` excludes sensitive files
